@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4 animate__animated animate__fadeInUp">
+    <h2 class="mb-4 text-center">➕ Add New Phone</h2>
+    <form method="POST" id="add-phone-form" class="card p-4 shadow-lg rounded bg-dark text-light">
+
+        <div class="mb-3">
+            <label class="form-label">Brand</label>
+            <select name="brand" class="form-select" required>
+                <option value="">-- Select Brand --</option>
+                <option>Samsung</option>
+                <option>iPhone</option>
+                <option>Xiaomi</option>
+                <option>Huawei</option>
+                <option>Other</option>
+            </select>
+        </div>
+
+        <div id="serial-inputs" class="row g-3 mt-3"></div>
+        <div id="barcode-scanner" style="width:100%; max-width:400px; margin:auto; display:none;"></div>
+        <button type="button" id="close-scanner" class="btn btn-danger w-100 mt-2" style="display:none;">❌ Close Scanner</button>
+
+        <div class="mb-3">
+            <label class="form-label">Model</label>
+            <input type="text" name="model" class="form-control" required>
+        </div>
+
+        <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" name="box" id="boxCheck">
+            <label class="form-check-label" for="boxCheck">Includes Box</label>
+        </div>
+        <div class="form-check mb-3">
+            <input class="form-check-input" type="checkbox" name="charger" id="chargerCheck">
+            <label class="form-check-label" for="chargerCheck">Includes Charger</label>
+        </div>
+
+        <div class="mb-3">
+            <label for="bought_price" class="form-label">Bought Price</label>
+            <div class="input-group">
+                <input type="number" id="bought_price" name="bought_price" class="form-control" value="0" required>
+                <span class="input-group-text">(LE)</span>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label for="sell_price" class="form-label">Sell Price</label>
+            <div class="input-group">
+                <input type="number" name="sell_price" id="sell_price" class="form-control" required>
+                <span class="input-group-text">(LE)</span>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label for="quantity" class="form-label">Quantity</label>
+            <div class="input-group">
+                <input type="number" id="quantity" name="quantity" class="form-control" required>
+                <span class="input-group-text">(Units)</span>
+            </div>
+        </div>
+        
+        <div class="mb-3">
+            <label for="category" class="form-label">Category</label>
+            <select class="form-select" id="category" name="category" required>
+                <option value="Available">Available</option>
+                <option value="Sold">Sold</option>
+                <option value="Service">Service</option>
+                <option value="Finished">Finished</option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Notes</label>
+            <textarea name="notes" class="form-control" rows="3"></textarea>
+        </div>
+
+        <div class="text-center">
+            <button type="submit" class="btn btn-success btn-lg shadow">💾 Save Phone</button>
+            <a href="{{ url_for('inventory') }}" class="btn btn-secondary btn-lg">↩ Back</a>
+        </div>
+    </form>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+{% endblock %}

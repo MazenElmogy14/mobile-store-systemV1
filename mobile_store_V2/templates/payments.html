@@ -1,0 +1,157 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card p-4 animate__animated animate__fadeInUp">
+    <h2 class="mb-3">💵 Sell {{ phone['Model'] }}</h2>
+    
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flashes">
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <form method="POST" id="sell-form">
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label for="customer_name" class="form-label">Customer Name</label>
+                <input type="text" class="form-control" id="customer_name" name="customer_name" placeholder="Enter customer name" required>
+            </div>
+            <div class="col-md-6">
+                <label for="customer_number" class="form-label">Customer Number</label>
+                <input type="text" class="form-control" id="customer_number" name="customer_number" placeholder="Enter phone number">
+            </div>
+            <div class="col-md-6">
+                <label for="sell_price" class="form-label">Sell Price (Per Unit)</label>
+                <input type="number" step="0.01" class="form-control" id="sell_price" name="sell_price" value="{{ phone['Sell Price'] }}" required>
+            </div>
+            <div class="col-md-6">
+                <label for="quantity" class="form-label">Quantity</label>
+                <input type="number" class="form-control" id="quantity" name="quantity" min="1" max="{{ phone['Quantity'] }}" required>
+            </div>
+        </div>
+
+        <div id="barcode-scanner" style="width:100%; max-width:400px; margin:auto; display:none;"></div>
+        <button type="button" id="close-scanner" class="btn btn-danger w-100 mt-2" style="display:none;">❌ Close Scanner</button>
+        
+        <div id="serial-inputs" class="row g-3 mt-3"></div>
+
+        <button type="submit" class="btn btn-success mt-4 w-100">✅ Confirm Sale</button>
+    </form>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const quantityInput = document.getElementById('quantity');
+        const serialInputsContainer = document.getElementById('serial-inputs');
+        const sellForm = document.getElementById('sell-form');
+        const scannerDiv = document.getElementById('barcode-scanner');
+        const closeScannerBtn = document.getElementById('close-scanner');
+    
+        let isScanning = false;
+        let currentScanningInput = null;
+    
+        function startScanner(inputElement) {
+            if (isScanning) stopScanner();
+    
+            scannerDiv.style.display = 'block';
+            closeScannerBtn.style.display = 'block';
+            currentScanningInput = inputElement;
+            isScanning = true;
+    
+            Quagga.init({
+                inputStream: {
+                    type: "LiveStream",
+                    target: scannerDiv,
+                    constraints: {
+                        facingMode: "environment"
+                    }
+                },
+                decoder: {
+                    readers: ["code_128_reader", "ean_reader", "upc_reader"] // common barcode types
+                }
+            }, function(err) {
+                if (err) {
+                    console.error(err);
+                    alert("Camera init error: " + err);
+                    stopScanner();
+                    return;
+                }
+                Quagga.start();
+            });
+    
+            Quagga.onDetected(function(result) {
+                if (currentScanningInput) {
+                    currentScanningInput.value = result.codeResult.code;
+                    stopScanner();
+                }
+            });
+        }
+    
+        function stopScanner() {
+            if (isScanning) {
+                Quagga.stop();
+                scannerDiv.style.display = 'none';
+                closeScannerBtn.style.display = 'none';
+                currentScanningInput = null;
+                isScanning = false;
+            }
+        }
+    
+        function generateSerialInputs() {
+            const quantity = parseInt(quantityInput.value) || 0;
+            serialInputsContainer.innerHTML = '';
+            stopScanner();
+    
+            if (quantity > 0) {
+                for (let i = 0; i < quantity; i++) {
+                    const div = document.createElement('div');
+                    div.className = 'col-md-6';
+                    div.innerHTML = `
+                        <label for="serial-${i}" class="form-label">Serial Number #${i + 1}</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="serial-${i}" name="serials" placeholder="Enter or scan serial" required>
+                            <button type="button" class="btn btn-outline-primary scan-btn" data-target-id="serial-${i}">📷 Scan</button>
+                        </div>
+                    `;
+                    serialInputsContainer.appendChild(div);
+                }
+            }
+        }
+    
+        // Validate serials (must be unique)
+        sellForm.addEventListener('submit', function(event) {
+            const serialInputs = document.querySelectorAll('input[name="serials"]');
+            const serialNumbers = Array.from(serialInputs).map(input => input.value.trim());
+            const uniqueSerials = new Set(serialNumbers);
+    
+            if (uniqueSerials.size !== serialInputs.length) {
+                event.preventDefault();
+                alert('⚠️ All serial numbers must be unique!');
+            }
+        });
+    
+        // Attach scan button handler
+        serialInputsContainer.addEventListener('click', function(event) {
+            if (event.target.classList.contains('scan-btn')) {
+                const targetId = event.target.getAttribute('data-target-id');
+                const targetInput = document.getElementById(targetId);
+                startScanner(targetInput);
+            }
+        });
+    
+        // Close scanner manually
+        closeScannerBtn.addEventListener('click', stopScanner);
+    
+        // Listen to quantity changes
+        quantityInput.addEventListener('input', generateSerialInputs);
+        quantityInput.addEventListener('change', generateSerialInputs);
+    
+        // Run once on page load
+        generateSerialInputs();
+    });
+</script>
+{% endblock %}

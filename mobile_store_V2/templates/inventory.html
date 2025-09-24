@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card p-4 animate__animated animate__fadeInUp">
+    <h2 class="mb-3">📦 Inventory</h2>
+    
+    <h4 class="mb-3">Total Inventory: {{ total_quantity }}</h4>
+
+    <div class="d-flex justify-content-end mb-3">
+        <a href="{{ url_for('add') }}" class="btn btn-primary">➕ Add New Phone</a>
+    </div>
+
+    <table class="table table-striped table-hover">
+        <thead>
+            <tr>
+                <th>Serial</th>
+                <th>Brand</th>
+                <th>Model</th>
+                <th>Quantity</th>
+                <th>Box</th>
+                <th>Charger</th>
+                <th>Bought Price</th>
+                <th>Sell Price</th>
+                <th>Category</th>
+                <th>Notes</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for phone in phones %}
+            <tr>
+                <td>{{ phone['Serial'] }}</td>
+                <td>{{ phone['Brand'] }}</td>
+                <td>{{ phone['Model'] }}</td>
+                <td>{{ phone.get('Quantity', 'N/A') }}</td>
+                <td>{{ phone['Box'] }}</td>
+                <td>{{ phone['Charger'] }}</td>
+                <td>{{ phone["Bought Price"] }}</td>
+                <td>{{ phone["Sell Price"] }}</td>
+                <td>{{ phone['Category'] }}</td>
+                <td>{{ phone['Notes'] }}</td>
+                <td>
+                    <div class="d-flex flex-wrap gap-2">
+                        <a href="{{ url_for('edit', serial=phone['Serial']) }}" class="btn btn-sm btn-warning">✏️ Edit</a>
+                        <a href="{{ url_for('sell_product', serial=phone['Serial']) }}" class="btn btn-sm btn-success">💵 Sell</a>
+                        <form action="{{ url_for('send_to_service') }}" method="post" style="display:inline;">
+                            <input type="hidden" name="brand" value="{{ phone['Brand'] }}">
+                            <input type="hidden" name="model" value="{{ phone['Model'] }}">
+                            <input type="hidden" name="box" value="{{ phone['Box'] }}">
+                            <input type="hidden" name="charger" value="{{ phone['Charger'] }}">
+                            <input type="hidden" name="sell_price" value="{{ phone['Sell Price'] }}">
+                            <button type="submit" class="btn btn-sm btn-info text-white">🛠️ Service</button>
+                        </form>
+                        <form action="{{ url_for('delete') }}" method="post" style="display:inline;">
+                            <input type="hidden" name="brand" value="{{ phone['Brand'] }}">
+                            <input type="hidden" name="model" value="{{ phone['Model'] }}">
+                            <input type="hidden" name="box" value="{{ phone['Box'] }}">
+                            <input type="hidden" name="charger" value="{{ phone['Charger'] }}">
+                            <input type="hidden" name="sell_price" value="{{ phone['Sell Price'] }}">
+                            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

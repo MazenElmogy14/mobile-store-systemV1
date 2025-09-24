@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card p-4 animate__animated animate__fadeInUp">
+    <h2 class="mb-3">Edit Phone Details ✏️</h2>
+    <form action="{{ url_for('edit', serial=phone.Serial) }}" method="POST">
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label for="serial" class="form-label">Serial</label>
+                <input type="text" class="form-control" id="serial" name="serial" value="{{ phone.Serial }}" required>
+            </div>
+            <div class="col-md-6">
+                <label for="brand" class="form-label">Brand</label>
+                <input type="text" class="form-control" id="brand" name="brand" value="{{ phone.Brand }}" required>
+            </div>
+            <div class="col-md-6">
+                <label for="model" class="form-label">Model</label>
+                <input type="text" class="form-control" id="model" name="model" value="{{ phone.Model }}" required>
+            </div>
+            <div class="col-md-6">
+                <label for="bought_price" class="form-label">Bought Price</label>
+                <input type="number" class="form-control" id="bought_price" name="bought_price" value="{{ phone['Bought Price'] }}" step="any" required>
+            </div>
+            <div class="col-md-6">
+                <label for="sell_price" class="form-label">Sell Price</label>
+                <input type="number" class="form-control" id="sell_price" name="sell_price" value="{{ phone['Sell Price'] }}" step="any" required>
+            </div>
+            <div>
+                <label for="quantity">Quantity:</label>
+                <input type="number" id="quantity" name="quantity" value="{{ phone.get('Quantity', 1) }}" required>
+            </div>
+            
+            <div class="col-md-6">
+                <label for="category" class="form-label">Category</label>
+                <select class="form-select" id="category" name="category" required>
+                    <option value="Available" {% if phone.Category == "Available" %}selected{% endif %}>Available</option>
+                    <option value="Sold" {% if phone.Category == "Sold" %}selected{% endif %}>Sold</option>
+                    <option value="Service" {% if phone.Category == "Service" %}selected{% endif %}>Service</option>
+                    <option value="Finished" {% if phone.Category == "Finished" %}selected{% endif %}>Finished</option>
+                </select>
+            </div>
+
+            <div class="col-12">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="box" name="box" value="Yes" {% if phone.Box == "Yes" %}checked{% endif %}>
+                    <label class="form-check-label" for="box">Box Included</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="charger" name="charger" value="Yes" {% if phone.Charger == "Yes" %}checked{% endif %}>
+                    <label class="form-check-label" for="charger">Charger Included</label>
+                </div>
+            </div>
+
+            <div class="col-12">
+                <label for="notes" class="form-label">Notes</label>
+                <textarea class="form-control" id="notes" name="notes" rows="3">{{ phone.Notes }}</textarea>
+            </div>
+
+            <div class="col-12 mt-4">
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+                <a href="{{ url_for('inventory') }}" class="btn btn-secondary">Cancel</a>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}

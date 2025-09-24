@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="animate__animated animate__fadeInUp">
+    <h2 class="mb-4">📦 Sells Section</h2>
+    
+    <h4 class="mb-3">Total Available Phones: {{ total_available_quantity }}</h4>
+
+    <div class="mb-4">
+        <form class="d-flex" role="search" method="GET" action="{{ url_for('sells') }}">
+            <input 
+                class="form-control me-2 search-bar" 
+                type="search" 
+                placeholder="Search by Brand or Model" 
+                aria-label="Search" 
+                name="search" 
+                value="{{ search_query }}"
+            >
+            <button class="btn btn-outline-success" type="submit">Search</button>
+            {% if search_query %}
+            <a href="{{ url_for('sells') }}" class="btn btn-outline-danger ms-2">Clear Search</a>
+            {% endif %}
+        </form>
+    </div>
+
+    <table class="table table-dark table-hover table-striped align-middle">
+        <thead>
+            <tr>
+                <th>Brand</th>
+                <th>Serial</th>
+                <th>Model</th>
+                <th>Quantity</th>
+                <th>Box</th>
+                <th>Charger</th>
+                <th>Bought Price</th>
+                <th>Sell Price</th>
+                <th>Category</th>
+                <th>Notes</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for phone in phones %}
+            <tr>
+                <td>{{ phone['Brand'] }}</td>
+                <td>{{ phone['Serial'] }}</td>
+                <td>{{ phone['Model'] }}</td>
+                <td>{{ phone.get('Quantity', 'N/A') }}</td>
+                <td>{{ phone['Box'] }}</td>
+                <td>{{ phone['Charger'] }}</td>
+                <td>{{ phone['Bought Price'] }}</td>
+                <td>{{ phone['Sell Price'] }}</td>
+                <td>{{ phone['Category'] }}</td>
+                <td>{{ phone['Notes'] }}</td>
+                <td>
+                    <a href="{{ url_for('sell_product', serial=phone['Serial']) }}" class="btn btn-success btn-sm">💵 Sell</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

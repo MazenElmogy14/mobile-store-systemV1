@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="animate__animated animate__fadeInUp container">
+    <h2 class="mb-4">Add Phone to Service ➕</h2>
+    <form action="{{ url_for('add_service') }}" method="POST">
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label for="brand" class="form-label">Brand</label>
+                <input type="text" class="form-control" id="brand" name="brand" required>
+            </div>
+            <div class="col-md-6">
+                <label for="serial" class="form-label">Serial Number</label>
+                <input type="text" class="form-control" id="serial" name="serial" required>
+            </div>
+            <div class="col-md-6">
+                <label for="model" class="form-label">Model</label>
+                <input type="text" class="form-control" id="model" name="model" required>
+            </div>
+            <div class="col-md-6">
+                <label for="sell_price" class="form-label">Service Price</label>
+                <input type="number" step="0.01" class="form-control" id="sell_price" name="sell_price" required>
+            </div>
+            <div class="col-md-6">
+                <label for="customer_name" class="form-label">Customer Name</label>
+                <input type="text" class="form-control" id="customer_name" name="customer_name" required>
+            </div>
+            <div class="col-md-6">
+                <label for="customer_number" class="form-label">Customer Number</label>
+                <input type="text" class="form-control" id="customer_number" name="customer_number" required>
+            </div>
+            <div class="col-12">
+                <label for="notes" class="form-label">Notes (Service Details)</label>
+                <textarea class="form-control" id="notes" name="notes" rows="3"></textarea>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-success mt-4">Add to Service</button>
+    </form>
+</div>
+{% endblock %}
